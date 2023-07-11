@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spectral Ruleset</title>
+    <style>
+        .error, .warn, .info {
+            border: 5px solid;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .error { border-color: red; }
+        .warn { border-color: orange; }
+        .info { border-color: blue; }
+
+        .severity {
+            background-color: inherit;
+            color: inherit;
+            display: inline;
+            padding: 3px 5px;
+            border-radius: 5px;
+        }
+
+        .error .severity { background-color: red; color: white; }
+        .warn .severity { background-color: orange; color: white; }
+        .info .severity { background-color: blue; color: white; }
+
+        hr { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>API Style Guide</h1>
+    <h2>Full Spectral OAS Ruleset</h2>
+    <h4>See also Spectral built-in ruleset <a href="https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules">here</a>.</h3>
+    
+    
+        <div class="warn">
+            <h2>ensure-openapi-version</h2>
+            <p><strong>Severity: </strong><span class="severity">warn</span></p>
+            <p>The OpenAPI specification format MUST be 3.0.0.</p>
+        </div>
+        <br><br>
+    
+        <div class="error">
+            <h2>contact-properties</h2>
+            <p><strong>Severity: </strong><span class="severity">error</span></p>
+            <p>Contact object must have at least a "name" as a required field.</p>
+        </div>
+        <br><br>
+    
+        <div class="warn">
+            <h2>ensure-only-major-api-versions</h2>
+            <p><strong>Severity: </strong><span class="severity">warn</span></p>
+            <p>Using semver-like versions for an API are almost never necessary, because breaking changes could only happen on a major version, and non-breaking changes don't matter. The entire concept is invalidated by API evolution means that a minor version can be deployed that adds new functionality, and that should not break anything. If you have a patch, getting that patched version out to clients immediately means fewer production issues, and you don't want to wait for them to redeploy the client application to use the new server URL.</p>
+        </div>
+        <br><br>
+    
+        <div class="warn">
+            <h2>no-version-number-in-paths</h2>
+            <p><strong>Severity: </strong><span class="severity">warn</span></p>
+            <p>Version numbers (like "/v1") should be in "servers", not in "paths"</p>
+        </div>
+        <br><br>
+    
+        <div class="warn">
+            <h2>ensure-GET-no-request-body</h2>
+            <p><strong>Severity: </strong><span class="severity">warn</span></p>
+            <p>A `GET` request MUST NOT accept a request body.</p>
+        </div>
+        <br><br>
+    
+        <div class="warn">
+            <h2>ensure-DELETE-no-request-body</h2>
+            <p><strong>Severity: </strong><span class="severity">warn</span></p>
+            <p>A `DELETE` request MUST NOT accept a request body.</p>
+        </div>
+        <br><br>
+    
+        <div class="warn">
+            <h2>ensure-no-crud-in-uri-names</h2>
+            <p><strong>Severity: </strong><span class="severity">warn</span></p>
+            <p>SHOULD NOT use CRUD function names in URIs</p>
+        </div>
+        <br><br>
+    
+        <div class="warn">
+            <h2>ensure-no-crud-in-operation-id</h2>
+            <p><strong>Severity: </strong><span class="severity">warn</span></p>
+            <p>SHOULD NOT use CRUD function names in operation ids</p>
+        </div>
+        <br><br>
+    
+</body>
+</html>
+
+

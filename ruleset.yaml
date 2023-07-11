@@ -1,0 +1,108 @@
+# ##########################################################
+# Section: Structure                                       #
+# This ruleset validates the structure and elements of     #
+# the OpenAPI file to make sure it's clear and consistent. #
+# [link here for documentation]                            #
+# ##########################################################
+
+rules:
+
+  # #########################
+  # OpenAPI Format Version  #
+  # #########################
+
+  ensure-openapi-version:
+    description: The OpenAPI specification format MUST be 3.0.0.
+    message: "{{description}}"
+    severity: warn
+    given: "$"
+    then:
+      field: openapi
+      function: pattern
+      functionOptions:
+        match: 3.0.0
+
+  # #############
+  # Info Rules  #
+  # #############
+
+  # Contact object is only bound to have a name as a required field
+  contact-properties:
+    description: Contact object must have at least a "name" as a required field.
+    message: "{{description}}"
+    severity: error
+    given: "$"
+    then:
+      field: info.contact.name
+      function: truthy
+
+  # ############# #
+  # Servers Rules #
+  # ############# #
+
+  # Ensure only major versions in servers urls (good practice)
+  ensure-only-major-api-versions:
+    description: "Using semver-like versions for an API are almost never necessary, because breaking changes could only happen on a major version, and non-breaking changes don't matter. The entire concept is invalidated by API evolution means that a minor version can be deployed that adds new functionality, and that should not break anything. If you have a patch, getting that patched version out to clients immediately means fewer production issues, and you don't want to wait for them to redeploy the client application to use the new server URL."
+    message: "Version numbers SHOULD contain major only, no minor or patch."
+    severity: warn
+    given: "$.servers..url"
+    then:
+      function: pattern
+      functionOptions:
+        notMatch: "/[\\.|\\/|](v|version)?[0-9]+\\.[0-9]+/i"
+
+  # ########### #
+  # Path Rules  #
+  # ########### #
+
+  # Enforce version not to be in path (good practice)
+  no-version-number-in-paths:
+    description: Version numbers (like "/v1") should be in "servers", not in "paths"
+    message: "{{description}}"
+    severity: warn
+    given: "$.paths[*]~"
+    then:
+      function: pattern
+      functionOptions:
+        notMatch: /((?:\/)(v|version)[0-9]{1,3}(?:\/)?)/i
+
+  # Ensure GET endpoints have no request body (REST - good practice)
+  ensure-GET-no-request-body:
+    description: A `GET` request MUST NOT accept a request body.
+    message: "{{description}}"
+    severity: warn
+    given: $.paths..get.requestBody
+    then:
+      function: undefined
+  
+  # Ensure DELETE endpoints have no request body (REST - good practice)
+  ensure-DELETE-no-request-body:
+    description: A `DELETE` request MUST NOT accept a request body.
+    message: "{{description}}"
+    severity: warn
+    given: $.paths..delete.requestBody
+    then:
+      function: undefined
+
+  # Ensure NO CRUD function names in URIs (REST - good practice)
+  ensure-no-crud-in-uri-names:
+    description: SHOULD NOT use CRUD function names in URIs
+    message: "{{description}}"
+    severity: warn
+    given: "$.paths[*]~"
+    then:
+      function: pattern
+      functionOptions:
+        notMatch: ^\/(get|put|post|patch|options|head|trace|delete).*
+
+  # Ensure NO CRUD function names in URIs (REST - good practice)
+  ensure-no-crud-in-operation-id:
+    description: SHOULD NOT use CRUD function names in operation ids
+    message: "{{description}}"
+    severity: warn
+    given: "$..*.operationId"
+    then:
+      function: pattern
+      functionOptions:
+        notMatch: \b(get|put|post|patch|options|head|trace|delete)\b
+
