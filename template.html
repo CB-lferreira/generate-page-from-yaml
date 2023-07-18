@@ -3,42 +3,85 @@
 <head>
     <title>Spectral Ruleset</title>
     <style>
-        .error, .warn, .info {
-            border: 5px solid;
+        .error, .warn, .info, .disabled {
+            border: 2px solid;
             border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 10px;
+            padding: 5px;
+            margin-bottom: 5px;
         }
 
         .error { border-color: red; }
         .warn { border-color: orange; }
         .info { border-color: blue; }
+        .disabled { border-color: grey;}
 
         .severity {
             background-color: inherit;
             color: inherit;
             display: inline;
-            padding: 3px 5px;
+            padding: 2px 2px;
+            border-radius: 5px;
+        }
+
+        .toggle {
+            background-color: inherit;
+            color: inherit;
+            display: inline;
+            padding: 2px 2px;
             border-radius: 5px;
         }
 
         .error .severity { background-color: red; color: white; }
         .warn .severity { background-color: orange; color: white; }
         .info .severity { background-color: blue; color: white; }
+        .disabled .toggle { background-color: grey; color: white; }
 
-        hr { margin: 10px 0; }
+        hr { margin: 2px 0; }
     </style>
 </head>
 <body>
-    <h1>API Style Guide</h1>
-    <h2>Full Spectral OAS Ruleset</h2>
-    <h4>See also Spectral built-in ruleset <a href="https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules">here</a>.</h3>
-    
+    <h1>Full Custom Spectral OAS Ruleset</h1>
+    <h4>See also Spectral built-in ruleset <a href="https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules">here</a>.</h4>
+    <hr><br><br>
+    <h1>Disabled Buil-it Rules</h1>
+    <p>The following rules are now disabled from the full Spectral built-in ruleset. Please refer to the .spectral.yaml ruleset file to enable them if needed.</p>
+    <div class="disabled">
+        {% for rule in disabled_rules %}
+            <h2 style="display: inline;">{{ rule.name }}</h2><p style="display: inline;"> - <span class="toggle">{{ rule.toggle }}</span></p>
+            <br><br>
+        {% endfor %}
+    </div>
+    <br>
+    <h1>Severity Override</h1>
+    <p>The following rules have been updated to a different severity level. Please refer to the .spectral.yaml ruleset file to change them back if needed.</p>
+    {% if updated_rules %}
+        {% set severity_divisions = dict(error=[], warn=[], info=[], hint=[]) %}
+        {% for rule in updated_rules %}
+            {% set rule_severity = rule.severity.lower() %}
+            {% if rule_severity in severity_divisions %}
+                {% set _ = severity_divisions[rule_severity].append(rule) %}
+            {% endif %}
+        {% endfor %}
+        {% for severity, rules in severity_divisions.items() %}
+            {% if rules %}
+                <div class="{{ severity }}">
+                    {% for rule in rules %}
+                        <h2 style="display: inline;">{{ rule.name }}</h2>
+                        <p style="display: inline;"> - <span class="severity">{{ rule.severity }}</span></p>
+                        <br><br>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    <br>
+    <h1>Custom Rules</h1>
+    <p>The following rules are custom rules that have been added or extended to the full Spectral built-in ruleset. Please refer to the .spectral.yaml ruleset file to change them if needed.</p>
     {% for rule in rules %}
         <div class="{{ rule.severity }}">
             <h2>{{ rule.name }}</h2>
             <p><strong>Severity: </strong><span class="severity">{{ rule.severity }}</span></p>
-            <p>{{ rule.description }}</p>
+            <p><strong>Description: </strong> {{ rule.description }}</p>
         </div>
         <br><br>
     {% endfor %}
